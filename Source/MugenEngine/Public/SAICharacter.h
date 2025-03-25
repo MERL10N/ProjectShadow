@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class UPawnSensingComponent;
+
 UCLASS()
 class MUGENENGINE_API ASAICharacter : public ACharacter
 {
@@ -16,14 +18,11 @@ public:
 	ASAICharacter();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+	
+	UPROPERTY(VisibleAnywhere , Category="Components")
+	UPawnSensingComponent* PawnSensingComponent;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void OnPawnSeen(APawn* Pawn);
 
 };

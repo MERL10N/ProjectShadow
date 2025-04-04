@@ -22,7 +22,23 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere , Category="Components")
 	UPawnSensingComponent* PawnSensingComponent;
+	
+	UPROPERTY(BlueprintReadWrite , Category= "Player")
+	float PlayerBounceOff;
+
+	UPROPERTY(BlueprintReadWrite , Category= "Player")
+	float PlayerHomingBounceOff;
+
+	UPROPERTY(BlueprintReadWrite , Category= "Player")
+	float PlayerDamageKnockBack;
+
+	UPROPERTY(BlueprintReadWrite , Category= "Player")
+	int ScoreAmount;
+
+	UPROPERTY(VisibleAnywhere , Category= "Player")
+	float EnemyRadius = 100;
 
 	void OnPawnSeen(APawn* Pawn);
 
+	
 };

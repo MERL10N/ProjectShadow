@@ -22,10 +22,10 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	AAIController* Controller = Cast<AAIController>(GetController());
-	if (Controller)
+	AAIController* TheController = Cast<AAIController>(GetController());
+	if (TheController)
 	{
-		UBlackboardComponent* BlackboardComponent = Controller->GetBlackboardComponent();
+		UBlackboardComponent* BlackboardComponent = TheController->GetBlackboardComponent();
 
 		BlackboardComponent->SetValueAsObject("TargetActor", Pawn);
 	}

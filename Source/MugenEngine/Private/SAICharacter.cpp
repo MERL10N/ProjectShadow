@@ -4,8 +4,10 @@
 #include "SAICharacter.h"
 
 #include "AIController.h"
+#include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
+#include "SAttributeComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -20,7 +22,7 @@ void ASAICharacter::PostInitializeComponents()
 	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
 }
 
-void ASAICharacter::OnPawnSeen(APawn* Pawn)
+void ASAICharacter::OnPawnSeen(APawn* Pawn) const
 {
 	AAIController* TheController = Cast<AAIController>(GetController());
 	if (TheController)
@@ -29,4 +31,9 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 
 		BlackboardComponent->SetValueAsObject("TargetActor", Pawn);
 	}
+}
+
+void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health,
+	float DeltaTime)
+{
 }

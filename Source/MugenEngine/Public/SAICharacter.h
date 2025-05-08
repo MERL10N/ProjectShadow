@@ -7,6 +7,7 @@
 #include "SAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class USAttributeComponent;
 
 UCLASS()
 class MUGENENGINE_API ASAICharacter : public ACharacter
@@ -38,7 +39,9 @@ protected:
 	UPROPERTY(VisibleAnywhere , Category= "Player")
 	float EnemyRadius = 100;
 
-	void OnPawnSeen(APawn* Pawn);
+	void OnPawnSeen(APawn* Pawn) const;
+
+	void OnHealthChanged(AActor* InstigatorActor,USAttributeComponent* OwningComponent, float Health, float DeltaTime);
 
 	
 };

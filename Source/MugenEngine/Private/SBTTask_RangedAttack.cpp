@@ -1,6 +1,4 @@
 // Sega owns the rights of Sonic The Hedgehog. Work done is done for learning purposes.
-
-
 #include "SBTTask_RangedAttack.h"
 #include "AIController.h"
 #include "GameFramework/Character.h"

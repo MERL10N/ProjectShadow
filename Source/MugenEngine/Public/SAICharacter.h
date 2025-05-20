@@ -41,7 +41,7 @@ protected:
 
 	void OnPawnSeen(APawn* Pawn) const;
 
-	void OnHealthChanged(AActor* InstigatorActor,USAttributeComponent* OwningComponent, float Health, float DeltaTime);
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float DeltaTime);
 
 	
 };

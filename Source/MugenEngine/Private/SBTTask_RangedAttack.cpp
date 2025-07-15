@@ -15,7 +15,7 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 			return EBTNodeResult::Failed;
 		}
 
-		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("weaponSocket_r") + FVector(60, 0, 0);
+		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("weaponSocket_r");
 
 		AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 

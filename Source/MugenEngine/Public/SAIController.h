@@ -20,4 +20,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target");
+	APawn* GunPawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target");
+	APawn* MyPawn;
 };

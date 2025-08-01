@@ -3,37 +3,42 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* MyController = OwnerComp.GetAIOwner();
-	if (ensure(MyController))
+	if (!MyController) return EBTNodeResult::Failed;
+
+	ACharacter* MyPawn = Cast<ACharacter>(MyController->GetPawn());
+	if (!MyPawn) return EBTNodeResult::Failed;
+
+	AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	if (!TargetActor) return EBTNodeResult::Failed;
+
+	FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("weaponSocket_r");
+	FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
+	Direction.Normalize();
+
+	FVector SpawnLocation = MuzzleLocation + Direction * 20.0f; // Offset forward
+	FRotator MuzzleRotation = Direction.Rotation();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Instigator = MyPawn->GetInstigator();
+	SpawnParameters.Owner = MyPawn;
+
+	AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, MuzzleRotation, SpawnParameters);
+
+	if (NewProjectile)
 	{
-		ACharacter* MyPawn = Cast<ACharacter>(MyController->GetPawn());
-		if (MyPawn == nullptr)
+		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(NewProjectile->GetRootComponent());
+		if (RootComp)
 		{
-			return EBTNodeResult::Failed;
+			RootComp->IgnoreActorWhenMoving(MyPawn, true);
 		}
 
-		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("weaponSocket_r");
-
-		AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
-
-		if (TargetActor == nullptr)
-		{
-			return EBTNodeResult::Failed;
-		}
-
-		FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
-		FRotator MuzzleRotation = Direction.Rotation();
-
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParameters.Instigator = MyPawn->GetInstigator();
-
-		AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParameters);
-
-		return NewProjectile ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
+		return EBTNodeResult::Succeeded;
 	}
 
 	return EBTNodeResult::Failed;

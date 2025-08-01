@@ -39,9 +39,10 @@ protected:
 	UPROPERTY(VisibleAnywhere , Category= "Player")
 	float EnemyRadius = 100;
 
+	UPROPERTY()
+	TArray<APawn*> SeenPawns;
+
 	void OnPawnSeen(APawn* Pawn) const;
 
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float DeltaTime);
-
-	
 };

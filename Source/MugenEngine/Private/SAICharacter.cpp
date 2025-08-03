@@ -7,7 +7,7 @@
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
-#include "SAttributeComponent.h"
+
 
 ASAICharacter::ASAICharacter()
 {
@@ -21,8 +21,7 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn) const
 {
-	AAIController* TheController = Cast<AAIController>(GetController());
-	if (TheController)
+	if (AAIController* TheController = Cast<AAIController>(GetController()))
 	{
 		UBlackboardComponent* BlackboardComponent = TheController->GetBlackboardComponent();
 

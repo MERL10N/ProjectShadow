@@ -45,9 +45,9 @@ void ASAIController::RefreshTarget()
 		float Score = 0.f;
 
 		if (Target == PlayerPawn)
-			Score += 20.f;   
+			Score += 10.f;   
 		if (Target->ActorHasTag("Enemy"))
-			Score += 40.f;    // Give higher priority to GUN robots
+			Score += 20.f;    // Give higher priority to GUN robots
 
 		const float Dist = FVector::Dist(AIPawn->GetActorLocation(), Target->GetActorLocation());
 		Score += FMath::Clamp(1000.f - Dist, 0.f, 1000.f);

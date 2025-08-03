@@ -20,6 +20,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+
+	// Updates the target list every second o
 	FTimerHandle TimerHandle_Retarget;
 	void RefreshTarget();
 	

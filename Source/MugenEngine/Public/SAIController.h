@@ -19,6 +19,9 @@ public:
 	UBehaviorTree* BehaviorTree;
 protected:
 	virtual void BeginPlay() override;
+
+	FTimerHandle TimerHandle_Retarget;
+	void RefreshTarget();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target");
 	APawn* MyPawn;

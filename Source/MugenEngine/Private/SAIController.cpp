@@ -12,18 +12,26 @@ void ASAIController::BeginPlay()
 
 	RunBehaviorTree(BehaviorTree);
 
-	//MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	GetWorld()->GetTimerManager().SetTimer(
+	TimerHandle_Retarget, 
+	this, 
+	&ASAIController::RefreshTarget, 
+	0.5f, // every second
+	true
+);
+}
 
-	//if (MyPawn)
-	//{
-	//	GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
-	//	GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
-	//}
-
+void ASAIController::RefreshTarget()
+{
 	TArray<AActor*> PotentialTargets;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Player"), PotentialTargets);
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), PotentialTargets);
 
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	if (PlayerPawn)
+	{
+		PotentialTargets.Add(PlayerPawn);
+	}
+	
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
 
@@ -31,16 +39,17 @@ void ASAIController::BeginPlay()
 
 	for (AActor* Target : PotentialTargets)
 	{
-		if (!Target || Target == AIPawn) continue;
+		if (!Target || Target == AIPawn)
+			continue;
 
 		float Score = 0.f;
 
-		if (Target->ActorHasTag("Player"))
-			Score += 1000.f;
-		else if (Target->ActorHasTag("Enemy"))
-			Score += 700.f;
+		if (Target == PlayerPawn)
+			Score += 20.f;   
+		if (Target->ActorHasTag("Enemy"))
+			Score += 40.f;    // Give higher priority to GUN robots
 
-		float Dist = FVector::Dist(AIPawn->GetActorLocation(), Target->GetActorLocation());
+		const float Dist = FVector::Dist(AIPawn->GetActorLocation(), Target->GetActorLocation());
 		Score += FMath::Clamp(1000.f - Dist, 0.f, 1000.f);
 
 		if (Score > BestScore)

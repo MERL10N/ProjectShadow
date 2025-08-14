@@ -7,6 +7,7 @@
 
 EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	UE_LOG(LogTemp, Log, TEXT("Test message"))
 	AAIController* MyController = OwnerComp.GetAIOwner();
 	if (!MyController) return EBTNodeResult::Failed;
 

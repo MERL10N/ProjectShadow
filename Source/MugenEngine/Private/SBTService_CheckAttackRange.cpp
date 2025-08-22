@@ -3,13 +3,15 @@
 
 #include "../Public/SBTService_CheckAttackRange.h"
 #include "AIController.h"
+#include "SAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
+	ASAIController* blackboardActor = Cast<ASAIController>(OwnerComp.GetAIOwner());
+	blackboardActor->RefreshTarget();
 	// Check distance between pawn and target done
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 

@@ -3,38 +3,62 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/PrimitiveComponent.h"
+
+USBTTask_RangedAttack::USBTTask_RangedAttack()
+	:  MaxBulletSpread(5.0f)
+{
+}
+
 
 EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	UE_LOG(LogTemp, Log, TEXT("Test message"))
 	AAIController* MyController = OwnerComp.GetAIOwner();
-	if (ensure(MyController))
+	if (!MyController) return EBTNodeResult::Failed;
+
+	ACharacter* MyPawn = Cast<ACharacter>(MyController->GetPawn());
+	if (!MyPawn) return EBTNodeResult::Failed;
+
+	AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	if (!TargetActor) return EBTNodeResult::Failed;
+
+	FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("weaponSocket_r");
+	FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
+	Direction.Normalize();
+
+	FVector SpawnLocation = MuzzleLocation + Direction * 20.0f; // Offset forward
+	FRotator MuzzleRotation = Direction.Rotation();
+
+
+	if (UAnimInstance* AnimInstance = MyPawn->GetMesh()->GetAnimInstance())
 	{
-		ACharacter* MyPawn = Cast<ACharacter>(MyController->GetPawn());
-		if (MyPawn == nullptr)
+		if (MyAnimationMontage && MyPawn)
 		{
-			return EBTNodeResult::Failed;
+			AnimInstance->Montage_Play(MyAnimationMontage, 1.f); // Play the firing animation montage
+			AnimInstance->Montage_JumpToSection(FName("Default"), MyAnimationMontage); 
+		}
+	}
+
+	MuzzleRotation.Pitch += FMath::RandRange(0.f, MaxBulletSpread);
+	MuzzleRotation.Yaw += FMath::RandRange(-MaxBulletSpread, MaxBulletSpread);
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Instigator = MyPawn->GetInstigator();
+	SpawnParameters.Owner = MyPawn;
+
+	if (AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, MuzzleRotation, SpawnParameters))
+	{
+		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(NewProjectile->GetRootComponent());
+		if (RootComp)
+		{
+			RootComp->IgnoreActorWhenMoving(MyPawn, true);
 		}
 
-		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("thumb_03_l");
-
-		AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
-
-		if (TargetActor == nullptr)
-		{
-			return EBTNodeResult::Failed;
-		}
-
-		FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
-		FRotator MuzzleRotation = Direction.Rotation();
-
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParameters.Instigator = MyPawn->GetInstigator();
-
-		AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParameters);
-
-		return NewProjectile ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
+		return EBTNodeResult::Succeeded;
 	}
 
 	return EBTNodeResult::Failed;
 }
+

@@ -17,7 +17,15 @@ public:
 	GENERATED_BODY()
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UBehaviorTree* BehaviorTree;
+	void RefreshTarget();
 protected:
 	virtual void BeginPlay() override;
+
+
+	// Updates the target list every second 
+	FTimerHandle TimerHandle_Retarget;
 	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target");
+	APawn* MyPawn;
 };

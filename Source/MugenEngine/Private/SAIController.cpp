@@ -12,11 +12,56 @@ void ASAIController::BeginPlay()
 
 	RunBehaviorTree(BehaviorTree);
 
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	GetWorld()->GetTimerManager().SetTimer(
+	TimerHandle_Retarget, 
+	this, 
+	&ASAIController::RefreshTarget, 
+	0.5f, // every second
+	true
+);
+}
 
-	if (MyPawn)
+void ASAIController::RefreshTarget()
+{
+	TArray<AActor*> PotentialTargets;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("BlackArmsEnemy"), PotentialTargets);
+
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	if (PlayerPawn)
 	{
-		GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
-		GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
+		PotentialTargets.Add(PlayerPawn);
+	}
+	
+	float BestScore = -FLT_MAX;
+	AActor* BestTarget = nullptr;
+
+	const APawn* AIPawn = GetPawn();
+
+	for (AActor* Target : PotentialTargets)
+	{
+		if (!Target || Target == AIPawn)
+			continue;
+
+		float Score = 0.f;
+
+		if (Target == PlayerPawn)
+			Score += 10.f;   
+		if (Target->ActorHasTag("Enemy"))
+			Score += 20.f;    // Give higher priority to GUN robots
+
+		const float Dist = FVector::Dist(AIPawn->GetActorLocation(), Target->GetActorLocation());
+		Score += FMath::Clamp(1000.f - Dist, 0.f, 1000.f);
+
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestTarget = Target;
+		}
+	}
+
+	if (BestTarget)
+	{
+		GetBlackboardComponent()->SetValueAsObject("TargetActor", BestTarget);
+		GetBlackboardComponent()->SetValueAsVector("MoveToLocation", BestTarget->GetActorLocation());
 	}
 }

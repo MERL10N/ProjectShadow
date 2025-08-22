@@ -23,6 +23,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere , Category="Components")
 	UPawnSensingComponent* PawnSensingComponent;
+
+	UPROPERTY(VisibleAnywhere , Category="Components")
+	USAttributeComponent* AttributeComponent;
+	
 	
 	UPROPERTY(BlueprintReadWrite , Category= "Player")
 	float PlayerBounceOff;
@@ -39,9 +43,11 @@ protected:
 	UPROPERTY(VisibleAnywhere , Category= "Player")
 	float EnemyRadius = 100;
 
-	void OnPawnSeen(APawn* Pawn) const;
+	UPROPERTY()
+	TArray<APawn*> SeenPawns;
 
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float DeltaTime);
-
-	
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float Delta);
 };

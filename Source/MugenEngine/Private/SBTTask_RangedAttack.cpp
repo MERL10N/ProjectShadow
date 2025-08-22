@@ -36,7 +36,7 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 		if (MyAnimationMontage && MyPawn)
 		{
 			AnimInstance->Montage_Play(MyAnimationMontage, 1.f); // Play the firing animation montage
-			AnimInstance->Montage_JumpToSection(FName("Default"), MyAnimationMontage); // optional
+			AnimInstance->Montage_JumpToSection(FName("Default"), MyAnimationMontage); 
 		}
 	}
 
@@ -48,9 +48,7 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 	SpawnParameters.Instigator = MyPawn->GetInstigator();
 	SpawnParameters.Owner = MyPawn;
 
-	AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, MuzzleRotation, SpawnParameters);
-
-	if (NewProjectile)
+	if (AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, MuzzleRotation, SpawnParameters))
 	{
 		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(NewProjectile->GetRootComponent());
 		if (RootComp)

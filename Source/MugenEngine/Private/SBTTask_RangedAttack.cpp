@@ -30,6 +30,16 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 	FVector SpawnLocation = MuzzleLocation + Direction * 20.0f; // Offset forward
 	FRotator MuzzleRotation = Direction.Rotation();
 
+
+	if (UAnimInstance* AnimInstance = MyPawn->GetMesh()->GetAnimInstance())
+	{
+		if (MyAnimationMontage && MyPawn)
+		{
+			AnimInstance->Montage_Play(MyAnimationMontage, 1.f); // Play the firing animation montage
+			AnimInstance->Montage_JumpToSection(FName("Default"), MyAnimationMontage); // optional
+		}
+	}
+
 	MuzzleRotation.Pitch += FMath::RandRange(0.f, MaxBulletSpread);
 	MuzzleRotation.Yaw += FMath::RandRange(-MaxBulletSpread, MaxBulletSpread);
 

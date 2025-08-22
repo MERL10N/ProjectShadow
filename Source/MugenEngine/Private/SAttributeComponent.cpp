@@ -32,3 +32,28 @@ void USAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+bool USAttributeComponent::IsAlive() const
+{
+	return Health > 0.f;
+}
+
+bool USAttributeComponent::IsFullHealth() const
+{
+	return Health == MaxHealth;
+}
+
+float USAttributeComponent::GetHealthMax() const
+{
+	return MaxHealth;
+}
+
+bool USAttributeComponent::ApplyHealthChange()
+{
+	float OldHealth = Health;
+	Health = FMath::Clamp(Health, 0.f, MaxHealth);
+	float ActualDelta =  Health - OldHealth;
+	//OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+
+	return ActualDelta != 0.f;
+}
+

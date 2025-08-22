@@ -35,7 +35,7 @@ void ASAIController::RefreshTarget()
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
 
-	APawn* AIPawn = GetPawn();
+	const APawn* AIPawn = GetPawn();
 
 	for (AActor* Target : PotentialTargets)
 	{

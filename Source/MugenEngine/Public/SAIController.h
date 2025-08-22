@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 
-	// Updates the target list every second o
+	// Updates the target list every second 
 	FTimerHandle TimerHandle_Retarget;
 	void RefreshTarget();
 	

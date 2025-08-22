@@ -23,6 +23,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere , Category="Components")
 	UPawnSensingComponent* PawnSensingComponent;
+
+	UPROPERTY(VisibleAnywhere , Category="Components")
+	USAttributeComponent* AttributeComponent;
+	
 	
 	UPROPERTY(BlueprintReadWrite , Category= "Player")
 	float PlayerBounceOff;
@@ -42,7 +46,8 @@ protected:
 	UPROPERTY()
 	TArray<APawn*> SeenPawns;
 
-	void OnPawnSeen(APawn* Pawn) const;
-
-	static void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float DeltaTime);
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health, float Delta);
 };

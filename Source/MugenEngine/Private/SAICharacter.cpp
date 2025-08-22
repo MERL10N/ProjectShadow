@@ -7,19 +7,23 @@
 #include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
-
+#include "SAttributeComponent.h"
 
 ASAICharacter::ASAICharacter()
 {
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
+	AttributeComponent =  CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ASAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+	//AttributeComponent->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
 }
 
-void ASAICharacter::OnPawnSeen(APawn* Pawn) const
+void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
 	if (AAIController* TheController = Cast<AAIController>(GetController()))
 	{
@@ -30,6 +34,16 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn) const
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float Health,
-	float DeltaTime)
+	float Delta)
 {
+	if (Delta < 0.f)
+	{
+		if (Health <= 0.f)
+		{
+			if (AAIController* TheController = Cast<AAIController>(GetController()))
+			{
+				TheController->GetBrainComponent()->StopLogic("Killed");
+			}
+		}
+	}
 }

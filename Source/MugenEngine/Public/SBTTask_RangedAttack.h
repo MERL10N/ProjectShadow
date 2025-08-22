@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TSubclassOf<AActor> ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* MyAnimationMontage;
+
 public:
 	USBTTask_RangedAttack();
 };

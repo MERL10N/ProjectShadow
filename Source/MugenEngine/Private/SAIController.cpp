@@ -24,7 +24,7 @@ void ASAIController::BeginPlay()
 void ASAIController::RefreshTarget()
 {
 	TArray<AActor*> PotentialTargets;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), PotentialTargets);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("BlackArmsEnemy"), PotentialTargets);
 
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 	if (PlayerPawn)
